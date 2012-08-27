@@ -26,5 +26,21 @@ describe Character do
     Then { character.armor.should == 10 }
   end
   
+  describe "#hit_points" do
+    Then { character.hit_points.should == 5 }
+  end
+
+  describe "#attack" do
+    Given(:opponent) { Character.new }
+
+    it "rolls attack die and checks against opponent AC" do
+      die = mock(Die)
+      Die.stub!(:new).and_return die
+      die.should_receive(:roll).and_return 10
+      opponent.should_receive(:armor).and_return 10
+      character.attack opponent
+    end
+  end
+  
 end
 
