@@ -142,5 +142,7 @@ describe Character do
       end
     end
   end
+
+  
 end
 

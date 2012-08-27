@@ -53,12 +53,20 @@ class Character
   end
   
   def attack(opponent)
-    roll = Die.new.roll
+    roll = attack_roll
     if roll == 20
-      opponent.hit_points -= 2
+      opponent.hit_points -= damage_roll * 2
     elsif roll > opponent.armor_class
-      opponent.hit_points -= 1
+      opponent.hit_points -= damage_roll
     end
+  end
+
+  def attack_roll
+    Die.new.roll
+  end
+
+  def damage_roll
+    1
   end
 
   def dead?
