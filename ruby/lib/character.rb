@@ -62,7 +62,7 @@ class Character
   end
 
   def attack_roll
-    Die.new.roll
+    Die.new.roll + strength_modifier
   end
 
   def damage_roll

@@ -143,6 +143,16 @@ describe Character do
     end
   end
 
+  context "with a strong character" do
+    Given(:beefcake) { dude = Character.new; dude.strength = 20; dude }
+    Given(:die) { mock(Die) }
+    Given do
+      Die.stub!(:new).and_return die
+      die.stub!(:roll).and_return 10
+    end
+    Then { beefcake.attack_roll.should == 15 }
+  end
+
   
 end
 
