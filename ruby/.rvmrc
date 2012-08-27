@@ -1,0 +1,4 @@
+export RUBYOPT="-Ilib:test"
+export JRUBY_OPTS="--1.9"
+rvm use 1.9.3@evercraft-kata --create
+#rvm use jruby@evercraft-kata --create
