@@ -12,6 +12,7 @@ GEM
       rb-fchange (~> 0.0.5)
       rb-fsevent (~> 0.9.1)
       rb-inotify (~> 0.8.8)
+    nyan-cat-formatter (0.0.9)
     rb-fchange (0.0.5)
       ffi
     rb-fsevent (0.9.1)
@@ -35,5 +36,6 @@ PLATFORMS
 DEPENDENCIES
   guard
   guard-rspec
+  nyan-cat-formatter
   rspec
   rspec-given
