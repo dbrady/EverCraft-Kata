@@ -32,15 +32,64 @@ describe Character do
 
   describe "#attack" do
     Given(:opponent) { Character.new }
-
-    it "rolls attack die and checks against opponent AC" do
-      die = mock(Die)
+    Given(:die) { mock(Die) }
+    Given do
       Die.stub!(:new).and_return die
-      die.should_receive(:roll).and_return 10
-      opponent.should_receive(:armor).and_return 10
-      character.attack opponent
+    end
+    
+    context "when attack hits" do
+      Given do
+        die.stub!(:roll).and_return 11
+      end
+      
+      it "rolls attack die and checks against opponent AC" do
+        die.should_receive(:roll).and_return 11
+        opponent.should_receive(:armor).and_return 10
+        character.attack opponent
+      end
+
+      it "damages opponent by 1 hp" do
+        lambda { character.attack opponent }.should change(opponent, :hit_points).by -1
+      end
+
+      it "does not damage the attacker" do
+        lambda { character.attack opponent }.should_not change(character, :hit_points)
+      end
+    end
+
+    context "when attack misses" do
+      Given do
+        die.stub!(:roll).and_return 10
+      end
+
+      it "does not damage opponent" do
+        lambda { character.attack opponent }.should_not change(opponent, :hit_points)
+      end
+    end
+
+    context "when attack is a critical hit" do
+      Given do
+        die.stub!(:roll).and_return 20
+      end
+
+      it "does double damage (2) to opponent" do
+        lambda { character.attack opponent }.should change(opponent, :hit_points).by -2
+      end
     end
   end
-  
+
+  describe "#dead?" do
+    context "when hp > 0" do
+      Then { character.should_not be_dead }
+    end
+    context "when hp == 0" do
+      When { character.hit_points = 0 }
+      Then { character.should be_dead }
+    end
+    context "when hp < 0" do
+      When { character.hit_points = -4 }
+      Then { character.should be_dead }
+    end
+  end
 end
 

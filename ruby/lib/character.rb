@@ -5,7 +5,7 @@ class Character
   ALIGNMENT_EVIL = :evil
   ALIGNMENT_NEUTRAL = :neutral
   
-  attr_accessor :name, :alignment, :armor, :hit_points
+  attr_accessor :name, :alignment, :armor, :hit_points, :dead
 
   def initialize
     @armor = 10
@@ -18,9 +18,16 @@ class Character
   end
 
   def attack(opponent)
-    Die.new.roll > opponent.armor    
+    roll = Die.new.roll
+    if roll == 20
+      opponent.hit_points -= 2
+    elsif roll > opponent.armor
+      opponent.hit_points -= 1
+    end
   end
-  
- 
-  
+
+  def dead?
+    @hit_points <= 0
+  end
 end
+
