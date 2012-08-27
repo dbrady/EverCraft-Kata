@@ -1,6 +1,8 @@
 require 'spec_helper'
 require 'character'
 
+ALL_ABILITIES = [:strength, :intelligence, :wisdom, :dexterity, :constitution, :charisma]
+
 describe Character do
   Given(:character) { Character.new }
 
@@ -22,8 +24,8 @@ describe Character do
     end
   end
 
-  describe "#armor" do
-    Then { character.armor.should == 10 }
+  describe "#armor_class" do
+    Then { character.armor_class.should == 10 }
   end
   
   describe "#hit_points" do
@@ -44,7 +46,7 @@ describe Character do
       
       it "rolls attack die and checks against opponent AC" do
         die.should_receive(:roll).and_return 11
-        opponent.should_receive(:armor).and_return 10
+        opponent.should_receive(:armor_class).and_return 10
         character.attack opponent
       end
 
@@ -89,6 +91,55 @@ describe Character do
     context "when hp < 0" do
       When { character.hit_points = -4 }
       Then { character.should be_dead }
+    end
+  end
+
+  describe "Ability Scores" do
+    ALL_ABILITIES.each do |ability|
+      context "minimum #{ability} score" do
+        it "cannot go below 1" do
+          lambda { character.send "#{ability}=", 0 }.should  raise_error(ArgumentError)
+        end
+      end
+
+      context "maximum #{ability} score" do
+        it "cannot go above 20" do
+          lambda { character.send "#{ability}=", 21 }.should  raise_error(ArgumentError)
+        end
+      end
+    end
+    
+    ALL_ABILITIES.each do |ability|
+      context "character has #{ability} ability with a default of 10" do
+        Then { character.send(ability).should == 10 }
+      end
+    end
+
+    ALL_ABILITIES.each do |ability|
+      describe "#{ability}_modifier" do
+        { 20 => 5,
+          19 => 4,
+          18 => 4,
+          17 => 3,
+          # ...
+          12 => 1,
+          11 => 0,
+          10 => 0,
+          9 => -1,
+          # ...
+          4 => -3,
+          3 => -4,
+          2 => -4,
+          1 => -5 }.each do |ability_score, modifier|
+          context "when #{ability} is #{ability_score}" do
+            When { character.send("#{ability}=", ability_score) }
+
+            it "has a modifier of #{modifier}" do
+              character.send("#{ability}_modifier").should == modifier
+            end
+          end
+        end
+      end
     end
   end
 end
